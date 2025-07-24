@@ -1,19 +1,23 @@
 import { ref, onUnmounted } from 'vue'
 
-export function useWebSocket(sessionId, participantId) {
+export function useWebSocket(url = null) {
   const socket = ref(null)
-  const connected = ref(false)
+  const isConnected = ref(false)
   const messages = ref([])
   const participants = ref([])
   const typingUsers = ref(new Set())
   
-  const connect = () => {
-    const wsUrl = `ws://localhost:8000/ws/chat/${sessionId}?participant_id=${participantId}`
+  const connect = (wsUrl = url) => {
+    if (!wsUrl) {
+      console.error('WebSocket URL is required')
+      return
+    }
+    
     socket.value = new WebSocket(wsUrl)
     
     socket.value.onopen = () => {
       console.log('WebSocket connected')
-      connected.value = true
+      isConnected.value = true
     }
     
     socket.value.onmessage = (event) => {
@@ -23,7 +27,7 @@ export function useWebSocket(sessionId, participantId) {
     
     socket.value.onclose = () => {
       console.log('WebSocket disconnected')
-      connected.value = false
+      isConnected.value = false
     }
     
     socket.value.onerror = (error) => {
@@ -59,17 +63,21 @@ export function useWebSocket(sessionId, participantId) {
     }
   }
   
-  const sendMessage = (content) => {
-    if (socket.value && connected.value) {
-      socket.value.send(JSON.stringify({
-        type: 'chat',
-        content
-      }))
+  const sendMessage = (message) => {
+    if (socket.value && isConnected.value) {
+      if (typeof message === 'string') {
+        socket.value.send(JSON.stringify({
+          type: 'chat',
+          content: message
+        }))
+      } else {
+        socket.value.send(JSON.stringify(message))
+      }
     }
   }
   
   const sendTypingIndicator = (isTyping) => {
-    if (socket.value && connected.value) {
+    if (socket.value && isConnected.value) {
       socket.value.send(JSON.stringify({
         type: 'typing',
         is_typing: isTyping
@@ -88,7 +96,7 @@ export function useWebSocket(sessionId, participantId) {
   })
   
   return {
-    connected,
+    isConnected,
     messages,
     participants,
     typingUsers,

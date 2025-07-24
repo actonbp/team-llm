@@ -36,8 +36,10 @@
         </div>
         
         <div v-else-if="activeTab === 'sessions'" class="section">
-          <h2>Active Sessions</h2>
-          <p>Session monitoring coming soon...</p>
+          <SessionList 
+            @select="selectSession" 
+            @monitor="monitorSession"
+          />
         </div>
 
         <div v-else-if="activeTab === 'participants'" class="section">
@@ -53,6 +55,14 @@
       :experiment="selectedExperiment"
       @close="selectedExperiment = null"
     />
+
+    <!-- Session Monitor Modal -->
+    <SessionMonitor
+      v-if="monitoringSession"
+      :session="monitoringSession"
+      @close="monitoringSession = null"
+      @update="handleSessionUpdate"
+    />
   </div>
 </template>
 
@@ -60,12 +70,28 @@
 import { ref } from 'vue'
 import ExperimentList from '@/components/experiments/ExperimentList.vue'
 import ExperimentDetail from '@/components/experiments/ExperimentDetail.vue'
+import SessionList from '@/components/sessions/SessionList.vue'
+import SessionMonitor from '@/components/sessions/SessionMonitor.vue'
 
 const activeTab = ref('experiments')
 const selectedExperiment = ref(null)
+const monitoringSession = ref(null)
 
 const selectExperiment = (experiment) => {
   selectedExperiment.value = experiment
+}
+
+const selectSession = (session) => {
+  console.log('Selected session:', session)
+}
+
+const monitorSession = (session) => {
+  monitoringSession.value = session
+}
+
+const handleSessionUpdate = (updatedSession) => {
+  monitoringSession.value = updatedSession
+  // Could trigger a refresh of the session list here
 }
 </script>
 
