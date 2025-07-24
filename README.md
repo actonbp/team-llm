@@ -67,18 +67,56 @@ team-llm/
 └── tests/            # Test suites
 ```
 
-## Quick Start
+## 🧪 Current Status: Testing Phase
+
+**The platform is in active testing phase.** Core functionality is complete:
+- ✅ Backend APIs (100% complete)
+- ✅ WebSocket real-time communication
+- ✅ AI agent integration framework
+- ✅ Database models and ethics tracking
+- 🚧 Frontend UI (70% complete)
+
+**Ready for Testing:** All-AI agent simulations can be run locally without requiring actual LLM API keys using our mock agent system.
+
+## Quick Start (Testing Mode)
+
+### Option 1: All-AI Simulation (Recommended for Testing)
 
 ```bash
-# Clone the repository
-git clone https://github.com/actonbp/team-llm.git
-cd team-llm
+# 1. Set up backend environment
+cd backend
+cp .env.example .env  # Uses SQLite by default, no setup needed
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
-# Start with Docker Compose
-docker-compose up
+# 2. Initialize database
+python -m alembic init alembic
+python -m alembic revision --autogenerate -m "Initial migration"
+python -m alembic upgrade head
+
+# 3. Start backend server
+uvicorn app.main:app --reload
+
+# 4. Run all-AI simulation (in another terminal)
+cd backend
+python scripts/run_ai_simulation.py
+
+# Access API documentation: http://localhost:8000/docs
+```
+
+### Option 2: Full Stack Testing (Requires Frontend)
+
+```bash
+# Start backend (as above)
+
+# In another terminal, start frontend
+cd frontend
+npm install
+npm run dev
 
 # Access the application
-# Researcher Command Center: http://localhost:8080
+# Researcher Dashboard: http://localhost:5173
 # API Documentation: http://localhost:8000/docs
 ```
 
