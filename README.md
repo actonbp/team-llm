@@ -18,6 +18,17 @@ This project uses a **multi-agent collaboration system**. If you're using Claude
    # Example: ./scripts/init-agent.sh backend-api
    ```
 
+## 🚧 Current Status (July 2025)
+
+**Infrastructure: ✅ WORKING** | **AI Conversation: ❌ NOT IMPLEMENTED**
+
+- All backend APIs functional (experiments, sessions, participants)
+- WebSocket connections working at `/ws/chat/{session_id}`
+- 4 AI agents can join sessions successfully
+- **Missing**: Conversation logic - agents connect but don't talk
+
+**Quick Test**: `python scripts/test-ai-agents.py`
+
 ## Overview
 
 This platform enables researchers to:
