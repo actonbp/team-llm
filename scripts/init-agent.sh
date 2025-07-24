@@ -97,3 +97,11 @@ echo -e "${YELLOW}Remember to update your status.md regularly!${NC}"
 
 # Store agent ID for current session
 echo "${AGENT_ID}" > .current-agent-id
+
+echo
+echo -e "${YELLOW}⚠️  IMPORTANT WARNING ⚠️${NC}"
+echo "The .current-agent-id file has been updated to show YOUR agent ID."
+echo "However, this file is GLOBAL and will change when other agents initialize."
+echo "DO NOT rely on this file to remember who you are!"
+echo "Your TRUE identity is: ${AGENT_ID}"
+echo "Your workspace is: ${AGENT_DIR}/"

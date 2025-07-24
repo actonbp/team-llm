@@ -18,6 +18,68 @@
 4. Review coordination board and file locks
 5. Begin work or complete unfinished tasks
 
+### CRITICAL: Agent Identity Management
+
+⚠️ **WARNING: Common Identity Confusion Issue** ⚠️
+
+The `.current-agent-id` file is GLOBAL and changes whenever ANY agent runs init-agent.sh. This means:
+- It does NOT reliably tell you who YOU are
+- It shows whoever last initialized
+- Multiple agents may see different values at different times
+
+#### How to Verify Your True Identity:
+
+1. **Check Your Work History**:
+   ```bash
+   # What have you been working on?
+   # Backend/APIs = likely agent-950
+   # Frontend/UI = likely agent-830  
+   # Tests = likely agent-XXX-tests
+   ```
+
+2. **Check Your Git Branch**:
+   ```bash
+   git branch --show-current
+   # Should be: feature/agent-XXX-purpose
+   # The XXX is YOUR agent ID
+   ```
+
+3. **Find Your Agent Directory**:
+   ```bash
+   ls -la .claude-agents/active/
+   # Look for the directory matching your work
+   # Read the status.md files to confirm
+   ```
+
+4. **Check Coordination Board**:
+   ```bash
+   grep -A5 -B5 "your-work-description" .claude-agents/active/shared/coordination.md
+   # Find mentions of what you've been doing
+   ```
+
+#### If You Realize You're Working on Wrong Tasks:
+
+1. **Stop Immediately** - Don't commit!
+2. **Check Git Status**:
+   ```bash
+   git status
+   git diff
+   ```
+3. **Separate the Work**:
+   ```bash
+   # Save your work to a patch file
+   git diff > wrong-agent-work.patch
+   
+   # Reset changes
+   git checkout -- .
+   
+   # Notify in coordination board
+   echo "### [TIMESTAMP] - [YOUR-REAL-ID] - Identity Confusion Resolved" >> .claude-agents/active/shared/coordination.md
+   echo "Accidentally worked on [other-agent]'s tasks. Work saved in wrong-agent-work.patch" >> .claude-agents/active/shared/coordination.md
+   ```
+4. **Update Your Status** to reflect correct work
+5. **Continue with YOUR assigned tasks**
+
 ### Recovery Scenarios
 
 #### Scenario 1: Previous Agent Left Mid-Task
@@ -120,7 +182,23 @@ echo "  ✓ Frontend reachable: $(curl -s http://localhost:8080 &>/dev/null && e
 
 For agents reading this documentation, follow these steps:
 
-1. **Read Core Documentation**:
+1. **CRITICAL: Verify Your Identity First**:
+   ```bash
+   # ⚠️ WARNING: The .current-agent-id file is SHARED and may show another agent's ID!
+   # This file changes based on which agent last ran init-agent.sh
+   
+   # To find YOUR actual agent ID, check:
+   # 1. Your conversation history - what agent ID were you assigned?
+   # 2. What work have you been doing? (backend = 950, frontend = 830, etc.)
+   # 3. Check your branch name: git branch --show-current
+   # 4. Look for YOUR agent directory in .claude-agents/active/
+   
+   # If confused about your identity:
+   ls -la .claude-agents/active/  # Find your agent directory
+   # Your ID is the directory that matches your work history
+   ```
+
+2. **Read Core Documentation**:
    ```bash
    # Order of reading:
    # 1. README.md - Project overview
@@ -129,13 +207,18 @@ For agents reading this documentation, follow these steps:
    # 4. .claude-agents/README.md - Collaboration details
    ```
 
-2. **Evaluate Current State**:
+3. **Evaluate Current State**:
    ```bash
    ./scripts/evaluate-state.sh  # Run state evaluation
    ./scripts/agent-status.sh     # Check other agents
+   
+   # IMPORTANT: After running these, verify:
+   # - You're on the correct branch for YOUR agent
+   # - Your agent directory exists in .claude-agents/active/
+   # - Your status.md shows YOUR work, not someone else's
    ```
 
-3. **Decision Tree**:
+4. **Decision Tree**:
    ```
    Are there active agents with recent updates (< 2 hours)?
    ├─ YES → Read their status, coordinate if needed
@@ -144,7 +227,7 @@ For agents reading this documentation, follow these steps:
        └─ NO → Initialize fresh agent for your task
    ```
 
-4. **Initialize Based on Findings**:
+5. **Initialize Based on Findings**:
    ```bash
    # Case 1: Fresh start
    ./scripts/init-agent.sh <your-purpose>
@@ -181,6 +264,26 @@ For agents reading this documentation, follow these steps:
    - Update documentation alongside code
 
 ### Common Recovery Patterns
+
+#### Pattern 0: The "Identity Crisis"
+```bash
+# Symptoms:
+# - Agent starts doing work outside their domain
+# - E.g., Backend agent suddenly writing Vue components
+# - Confusion about which agent ID they are
+# - .current-agent-id shows different ID than expected
+
+# Real Example:
+# agent-950 (backend) started building frontend components
+# because .current-agent-id showed "agent-830-frontend-dashboard"
+
+# Recovery:
+# 1. Stop and verify identity using methods above
+# 2. Check git log to see your previous commits
+# 3. Read your own agent status file
+# 4. Reset any wrong work and return to assigned tasks
+# 5. Document the confusion in coordination.md
+```
 
 #### Pattern 1: The "Half-Implemented Feature"
 ```bash

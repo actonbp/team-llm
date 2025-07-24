@@ -2,6 +2,20 @@
 
 This directory facilitates coordination between multiple Claude Code agents working on the same codebase simultaneously.
 
+## ⚠️ CRITICAL WARNING: Agent Identity ⚠️
+
+**The `.current-agent-id` file is SHARED and UNRELIABLE for determining your identity!**
+
+- This file shows whoever LAST ran init-agent.sh, NOT necessarily you
+- DO NOT rely on it to know who you are
+- Instead, verify your identity by:
+  1. Checking your conversation history and assigned work
+  2. Looking at your git branch name
+  3. Finding YOUR directory in `.claude-agents/active/`
+  4. Reading your own status.md file
+
+**If you get confused about your identity, STOP and verify before continuing!**
+
 ## Quick Start
 
 1. **Initialize as an agent**: Run `./scripts/init-agent.sh` from the project root
@@ -34,6 +48,10 @@ This directory facilitates coordination between multiple Claude Code agents work
 ./scripts/init-agent.sh [purpose]
 # Example: ./scripts/init-agent.sh backend-api
 # This creates: agent-001-backend-api/
+
+# WARNING: This updates .current-agent-id globally!
+# Other agents may see YOUR ID in that file
+# Always verify your identity through other means
 ```
 
 ### 2. Before Starting Any Task
@@ -141,6 +159,20 @@ If two agents need the same file:
 - Document thought process in respective log.md
 
 ## Troubleshooting
+
+**Q: I'm confused about which agent I am**
+A: DO NOT trust .current-agent-id! Check:
+   1. Your conversation history - what work were you assigned?
+   2. Your git branch: `git branch --show-current`
+   3. Find your directory: `ls -la .claude-agents/active/`
+   4. Read your status.md to confirm your work
+
+**Q: I accidentally started working on another agent's tasks**
+A: Stop immediately! 
+   1. Save your work: `git diff > wrong-work.patch`
+   2. Reset changes: `git checkout -- .`
+   3. Document in coordination.md
+   4. Return to your assigned work
 
 **Q: Another agent has locked the files I need**
 A: Check their ETA in status.md, coordinate in shared/coordination.md
