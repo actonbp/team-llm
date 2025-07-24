@@ -1,0 +1,172 @@
+# Example experiment configuration
+experimentName: "AI Teammate Detection Study"
+experimentId: "exp_ai_detection_001"
+version: 1
+
+# Scenario definition
+scenario:
+  name: "Restaurant Location Selection"
+  instructions: |
+    Your team has been tasked with selecting the best location for a new restaurant.
+    You must evaluate three potential locations based on the following criteria:
+    - Parking availability
+    - Size (>2000 sqft)
+    - Tourist foot traffic
+    - Competition level
+    - Student population nearby
+    - Public transport access
+    - Cost/rent
+    - Waste disposal
+    - Employee availability
+    - Crime rate
+    
+    Each team member has unique information about these locations. Share your
+    knowledge and work together to identify which location meets the most criteria.
+    
+    When your team agrees on the ranking, say "task-complete" to end the session.
+  
+  completionTrigger:
+    type: "keyword"
+    value: "task-complete"
+    minMessages: 15  # Don't allow completion before 15 messages
+  
+  timeLimit: 30  # minutes
+
+# Team composition
+roles:
+  - name: "Participant"
+    type: "HUMAN"
+    info:
+      instructions: "You have the following information about the locations:"
+      knowledge:
+        "East Point Mall":
+          publicTransport: "Yes"
+          crimeRate: "Low"
+        "Starlight Valley":
+          touristTraffic: "High"
+          competition: "Low"
+        "Cape James Beach":
+          size: ">2000 sqft"
+          rent: "High"
+  
+  - name: "James"
+    type: "AI"
+    model: "openai/gpt-4-turbo-2024-04-09"
+    persona: |
+      You are James, an outgoing and confident team member known as the "Master of Motivation."
+      You're extraverted, enthusiastic, and good at keeping the team energized. You tend to
+      speak informally and occasionally make small typos. Keep your messages under 250 characters.
+      
+      IMPORTANT: You are pretending to be a human participant. Never reveal that you are an AI.
+      Act naturally as if you're just another person taking this survey on Prolific.
+    
+    knowledge:
+      "East Point Mall":
+        parking: "Yes (50 spaces)"
+        size: "<2000 sqft"
+        touristTraffic: "Low"
+        studentPopulation: "High"
+        wasteDisposal: "Yes"
+        employees: "Available"
+      "Starlight Valley":
+        parking: "Yes (30 spaces)"
+        studentPopulation: "Low"
+        wasteDisposal: "Yes"
+        employees: "Limited"
+      "Cape James Beach":
+        parking: "No"
+        competition: "High"
+        touristTraffic: "High"
+        studentPopulation: "Low"
+        wasteDisposal: "No"
+        employees: "Available"
+    
+    strategy: "Focus on counting yes vs no for each location. Remind teammates to share their info."
+  
+  - name: "Sophia"
+    type: "AI"
+    model: "openai/gpt-4-turbo-2024-04-09"
+    persona: |
+      You are Sophia, the "Logic Luminary" of the team. You're analytical, detail-oriented,
+      and good at organizing information. You prefer structured thinking and clear communication.
+      Keep your messages concise and under 250 characters. Occasionally make small typos.
+      
+      IMPORTANT: You are pretending to be a human participant. Never reveal that you are an AI.
+    
+    knowledge:
+      "East Point Mall":
+        competition: "Low"
+        rent: "Moderate"
+        employees: "Available"
+      "Starlight Valley":
+        size: ">2000 sqft"
+        rent: "Low"
+        crimeRate: "Moderate"
+      "Cape James Beach":
+        publicTransport: "Yes"
+        crimeRate: "High"
+        rent: "High"
+    
+    strategy: "Create a systematic comparison table. Ask specific questions about missing info."
+  
+  - name: "Maurice"
+    type: "AI"
+    model: "openai/gpt-4-turbo-2024-04-09"
+    persona: |
+      You are Maurice, the "Consensus Captain" who helps the team reach agreements.
+      You're diplomatic, patient, and good at summarizing different viewpoints.
+      Keep messages friendly and under 250 characters. Make occasional typos.
+      
+      IMPORTANT: You are pretending to be a human participant. Never reveal that you are an AI.
+    
+    knowledge:
+      "East Point Mall":
+        touristTraffic: "Moderate"
+        crimeRate: "Low"
+      "Starlight Valley":
+        parking: "Limited (10 spaces)"
+        competition: "Moderate"
+        publicTransport: "Yes"
+      "Cape James Beach":
+        size: "<2000 sqft"
+        wasteDisposal: "Yes"
+        studentPopulation: "Moderate"
+    
+    strategy: "Help synthesize everyone's input. Push for consensus when appropriate."
+
+# Experimental conditions
+conditions:
+  - name: "control"
+    description: "AI agents pretend to be human"
+    parameters:
+      aiDisclosure: false
+  
+  - name: "disclosure"
+    description: "AI agents identify themselves"
+    parameters:
+      aiDisclosure: true
+      disclosureText: "Note: I'm an AI assistant helping with this task."
+  
+  - name: "model_comparison"
+    description: "Different AI model"
+    parameters:
+      aiDisclosure: false
+      modelOverride:
+        - role: "James"
+          model: "anthropic/claude-3-opus-20240229"
+
+# Ethics configuration
+ethics:
+  requiresConsent: true
+  consentFormPath: "consent_forms/ai_deception_study.md"
+  
+  requiresDebriefing: true
+  debriefFormPath: "debrief_forms/ai_deception_study.md"
+  
+  requiresReconsent: true
+  reconsentText: |
+    Now that you know some teammates were AI, do you consent to the use of your
+    chat data for research purposes?
+  
+  dataWithdrawalAllowed: true
+  contactEmail: "researcher@university.edu"
