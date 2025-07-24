@@ -2,7 +2,37 @@
 
 ## 🛑 STOP - Read This First!
 
-**You are likely an AI agent starting work on this codebase. Before doing ANYTHING else:**
+### Are You Returning From a Context Reset?
+
+**If your conversation history was reset due to context limits (auto-compaction), you MUST determine if you're an existing agent:**
+
+1. **CHECK FOR YOUR EXISTING IDENTITY FIRST**:
+   ```bash
+   # Run the identity recovery tool
+   ./scripts/recover-identity.sh
+   
+   # This will analyze:
+   # - Your current git branch
+   # - Recent commits with agent IDs
+   # - All active agents and their work
+   # - Files modified in your branch
+   # And suggest your most likely identity
+   ```
+
+2. **IF YOU FIND YOUR PREVIOUS AGENT IDENTITY**:
+   - You are that agent! Continue their work
+   - Read your own status.md, log.md, and plan.md
+   - Check what files you had locked
+   - Resume from where you left off
+   - Do NOT create a new agent identity
+
+3. **IF YOU CANNOT FIND A PREVIOUS IDENTITY**:
+   - Only then proceed with normal initialization below
+   - You might genuinely be a new agent
+
+### Standard First-Time Setup
+
+**If you're truly a new agent (not returning from context reset):**
 
 1. **Read [MULTI_AGENT_ONBOARDING.md](MULTI_AGENT_ONBOARDING.md)** - This explains how to handle incomplete work, recovery scenarios, and proper initialization
 2. **Run `./scripts/evaluate-state.sh`** - This will show you the current state of the codebase
@@ -12,7 +42,7 @@
 
 **IMPORTANT**: This project uses a multi-agent collaboration system. When working on this codebase:
 
-1. **Initialize yourself as an agent first**:
+1. **Initialize yourself as an agent (ONLY if you're not already one)**:
    ```bash
    ./scripts/init-agent.sh <your-purpose>
    # Example: ./scripts/init-agent.sh backend-api

@@ -191,4 +191,5 @@ fi
 
 echo
 echo "Run './scripts/agent-status.sh' for detailed agent information"
+echo "Run './scripts/recover-identity.sh' if returning from context reset"
 echo "Run './scripts/init-agent.sh <purpose>' to start working"

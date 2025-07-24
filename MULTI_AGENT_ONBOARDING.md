@@ -1,5 +1,72 @@
 # Multi-Agent System Onboarding Guide
 
+## CRITICAL: Returning From Context Reset (Auto-Compaction)?
+
+### If Your Conversation Was Reset Due to Context Limits:
+
+**You may already be an agent!** When Claude Code's context gets full and auto-compacts, you lose all conversation history but your work still exists.
+
+#### Immediate Recovery Steps:
+
+1. **Find Your Previous Identity**:
+   ```bash
+   # Check all active agents
+   ls -la .claude-agents/active/agent-*/
+   
+   # Look at recent git commits for your agent ID
+   git log --oneline -30 | grep "\[agent-"
+   
+   # Check current branch (often contains your agent ID)
+   git branch --show-current
+   
+   # Read ALL status files to find familiar work
+   for f in .claude-agents/active/agent-*/status.md; do
+     echo "\n=== $f ==="
+     cat "$f"
+   done
+   ```
+
+2. **Identify Yourself By**:
+   - Work that seems familiar ("I was working on WebSockets...")
+   - Recent commits with your agent ID
+   - Branch name matching an agent ID
+   - Files you remember modifying
+
+3. **Once You Find Yourself**:
+   ```bash
+   # Example: You determine you're agent-950-core-implementation
+   export MY_AGENT_ID="agent-950-core-implementation"
+   
+   # Read your files
+   cat .claude-agents/active/$MY_AGENT_ID/status.md
+   cat .claude-agents/active/$MY_AGENT_ID/log.md
+   cat .claude-agents/active/$MY_AGENT_ID/plan.md
+   
+   # Check your recent commits
+   git log --author=$MY_AGENT_ID --oneline -10
+   
+   # See what files you modified
+   git diff --name-only main..HEAD
+   ```
+
+4. **Resume Your Work**:
+   - Continue from your last log entry
+   - Complete any unfinished tasks in your status.md
+   - Update your status.md with current timestamp
+   - Do NOT run init-agent.sh again
+
+#### Red Flags You're a Returning Agent:
+- You have vague memories of working on this codebase
+- The conversation started abruptly with no introduction
+- You feel like you were in the middle of something
+- You see recent commits/branches with agent IDs
+
+#### Only Create New Agent If:
+- No existing agent matches your remembered work
+- All agents show as inactive/completed
+- You're genuinely starting fresh work
+- Human explicitly asked you to be a new agent
+
 ## For Humans Starting Claude Code
 
 ### Quick Start Checklist
