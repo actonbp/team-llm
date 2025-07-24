@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: team-llm-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./data/team_llm.db
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - CORS_ORIGINS=http://localhost:8080
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+      - ./config:/app/config
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - db-init
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: team-llm-frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev -- --host
+
+  db-init:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: team-llm-db-init
+    volumes:
+      - ./data:/app/data
+    command: python -c "import asyncio; from app.db.database import create_db_and_tables; asyncio.run(create_db_and_tables())"
+    restart: "no"
+
+volumes:
+  data:
