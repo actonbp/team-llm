@@ -5,6 +5,7 @@ from typing import Dict, Any
 from app.agents.base import Agent
 from app.agents.openai_agent import OpenAIAgent
 from app.agents.anthropic_agent import AnthropicAgent
+from app.agents.mock_agent import MockAgent
 
 
 class AgentFactory:
@@ -43,6 +44,15 @@ class AgentFactory:
             )
         elif provider == "anthropic":
             return AnthropicAgent(
+                name=name,
+                model=model,
+                persona=persona,
+                knowledge=knowledge,
+                strategy=strategy,
+                config=config
+            )
+        elif provider == "mock":
+            return MockAgent(
                 name=name,
                 model=model,
                 persona=persona,
