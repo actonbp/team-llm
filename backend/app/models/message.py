@@ -22,7 +22,7 @@ class Message(Base):
     
     # Metadata
     sequence_number = Column(Integer, nullable=False)  # Order within session
-    metadata = Column(JSON)  # Additional data (e.g., AI generation params)
+    extra_data = Column(JSON)  # Additional data (e.g., AI generation params)
     
     # Timing
     timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
