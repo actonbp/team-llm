@@ -22,12 +22,15 @@ This project uses a **multi-agent collaboration system**. If you're using Claude
 
 **Infrastructure: ✅ WORKING** | **AI Conversation: ❌ NOT IMPLEMENTED**
 
-- All backend APIs functional (experiments, sessions, participants)
-- WebSocket connections working at `/ws/chat/{session_id}`
-- 4 AI agents can join sessions successfully
-- **Missing**: Conversation logic - agents connect but don't talk
+- ✅ Backend APIs functional (experiments, sessions, participants)
+- ✅ WebSocket connections working
+- ✅ Mock AI agents can join sessions
+- ✅ SQLAlchemy v2.0 compatibility fixed
+- ❌ **AI agents don't generate responses** (main blocker)
+- ❌ Multi-human support not implemented
+- ❌ Configuration system missing (hardcoded to restaurant task)
 
-**Quick Test**: `python scripts/test-ai-agents.py`
+**Next Developer**: See [NEXT_AGENT_HANDOFF.md](NEXT_AGENT_HANDOFF.md) for detailed instructions
 
 ## Overview
 
